@@ -72,7 +72,9 @@
               err
             )
           );
-
+        videoDevice.applyConstraints({
+            advanced: [{torch: true}]
+          });
         console.log(test);
         if (captureDevice) {
           captureDevice
