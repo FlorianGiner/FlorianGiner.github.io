@@ -1,19 +1,83 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Camera</title>
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>New Website</title>
-
-
-</head>
-
-<body>
+  <body>
+    <div>
+      <h3>New Method</h3>
+      <image id="photo"></image>
+    </div>
+    <hr />
+    <div>
+      <h3>Old Method</h3>
+      <div id="canvas"></div>
+    </div>
+    <button id="button">Take Photo</button>
+    <button id="delete">Delete Picture</button>
+    <hr />
+    <video id="video"></video>
     <script>
-        window.onload = function() {
-            window.location.href = "https://www.youtube.com/watch?v=lXMskKTw3Bc&ab_channel=Pcrusen";
-        }
-    </script>
-</body>
+      let videoDevice;
+      let canvas = document.getElementById("canvas");
+      let photo = document.getElementById("photo");
+      let photoOld = document.getElementById("photoOld");
+      let constraints = { video: true };
+      let button = document.getElementById("button");
+      let video = document.getElementById("video");
+      let deleteButton = document.getElementById("delete");
+      var mediaStream;
+      var draw;
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(gotMedia)
+        .catch((err) => console.log(err.message));
 
+      button.addEventListener("click", takePicture);
+      deleteButton.addEventListener("click", deletePicture);
+      function gotMedia(media) {
+        mediaStream = media;
+        video.srcObject = media;
+        video.play();
+      }
+      async function takePicture() {
+        draw = document.createElement("canvas");
+        draw.width = video.videoWidth;
+        draw.height = video.videoHeight;
+        var context = draw.getContext("2d");
+        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        canvas.appendChild(draw);
+        videoDevice = mediaStream.getVideoTracks()[0];
+        let captureDevice = new ImageCapture(videoDevice);
+        let test = await captureDevice.getPhotoCapabilities();
+        if (test != null && test.fillLightMode != null) {
+            console.log("inside test if");
+          var imageCaptureConfig = {
+            fillLightMode: "torch" /* or "flash" */,
+            focusMode: "continuous",
+          };
+          captureDevice.setOptions(imageCaptureConfig)
+                .catch(err => console.error('setOptions(' + JSON.stringify(imageCaptureConfig) + ') failed: ', err));
+        }
+        console.log(test);
+        if (captureDevice) {
+          captureDevice
+            .takePhoto()
+            .then(processPhoto)
+            .catch((err) => console.log(err.message));
+        }
+      }
+
+      function processPhoto(blob) {
+        photo.src = window.URL.createObjectURL(blob);
+      }
+
+      function deletePicture() {
+        photo.src = "";
+        canvas.innerHTML = "";
+      }
+    </script>
+  </body>
 </html>
