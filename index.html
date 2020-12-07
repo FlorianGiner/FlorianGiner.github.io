@@ -48,6 +48,7 @@
         video.srcObject = media;
         video.play();
       }
+
       async function takePicture() {
         draw = document.createElement("canvas");
         draw.width = video.videoWidth;
@@ -59,26 +60,25 @@
         let captureDevice = new ImageCapture(videoDevice);
         let test = await captureDevice.getPhotoCapabilities();
 
-        console.log("inside test if");
-        var imageCaptureConfig = {
-          fillLightMode: "flash" /* or "flash" */,
-          focusMode: "continuous",
-        };
-        captureDevice
-          .setOptions(imageCaptureConfig)
-          .catch((err) =>
-            console.error(
-              "setOptions(" + JSON.stringify(imageCaptureConfig) + ") failed: ",
-              err
-            )
-          );
-        videoDevice.applyConstraints({
-            advanced: [{torch: true}]
-          });
         console.log(test);
+        var imageCaptureConfig = {
+          fillLightMode: "flash" /* or "flash" */ //,
+          //focusMode: "continuous",
+        };
+        // captureDevice
+        //   .setOptions(imageCaptureConfig)
+        //   .catch((err) =>
+        //     console.error(
+        //       "setOptions(" + JSON.stringify(imageCaptureConfig) + ") failed: ",
+        //       err
+        //     )
+        //   );
+        // videoDevice.applyConstraints({
+        //     advanced: [{torch: true}]
+        //   });
         if (captureDevice) {
           captureDevice
-            .takePhoto()
+            .takePhoto(imageCaptureConfig)
             .then(processPhoto)
             .catch((err) => console.log(err.message));
         }
