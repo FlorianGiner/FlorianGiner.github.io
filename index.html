@@ -24,7 +24,13 @@
       let canvas = document.getElementById("canvas");
       let photo = document.getElementById("photo");
       let photoOld = document.getElementById("photoOld");
-      let constraints = { video: true };
+      let constraints = {
+        video: {
+          width: {ideal: 1920},
+          height: {ideal: 1080},
+          facingMode: "environment"
+        },
+      };
       let button = document.getElementById("button");
       let video = document.getElementById("video");
       let deleteButton = document.getElementById("delete");
@@ -53,13 +59,21 @@
         let captureDevice = new ImageCapture(videoDevice);
         let test = await captureDevice.getPhotoCapabilities();
         if (test != null && test.fillLightMode != null) {
-            console.log("inside test if");
+          console.log("inside test if");
           var imageCaptureConfig = {
             fillLightMode: "torch" /* or "flash" */,
             focusMode: "continuous",
           };
-          captureDevice.setOptions(imageCaptureConfig)
-                .catch(err => console.error('setOptions(' + JSON.stringify(imageCaptureConfig) + ') failed: ', err));
+          captureDevice
+            .setOptions(imageCaptureConfig)
+            .catch((err) =>
+              console.error(
+                "setOptions(" +
+                  JSON.stringify(imageCaptureConfig) +
+                  ") failed: ",
+                err
+              )
+            );
         }
         console.log(test);
         if (captureDevice) {
